@@ -1,3 +1,5 @@
+using PackageManage.API.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
@@ -10,5 +12,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<CurrentUserMiddleware>();
 
 app.Run();
