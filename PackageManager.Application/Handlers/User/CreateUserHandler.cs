@@ -29,15 +29,26 @@ public class CreateUserHandler(
         };
         user.Password = hasher.HashPassword(user, request.Password);
         user.ID = Guid.NewGuid();
+        var transactionResult = await _unitOfWork.BeginTransactionAsync();
+        if (transactionResult.IsFailed)
+        {
+            return Result.Fail(transactionResult.Errors);
+        }
         var addUserResult = await _userRepository.AddUserAsync(user);
         if (addUserResult.IsFailed)
         {
             return Result.Fail(addUserResult.Errors);
         }
-        var savingResult = await _unitOfWork.SaveChangesAsync();
-        if (savingResult.IsFailed)
+        var commitResult = await _unitOfWork.CommitTransactionAsync();
+        if (commitResult.IsFailed)
         {
-            return Result.Fail(savingResult.Errors);
+            var rollbackResult = await _unitOfWork.RollbackTransactionAsync();
+            if (rollbackResult.IsFailed)
+            {
+                _logger.LogCritical("Failed to rollback transaction at {Time}", DateTime.UtcNow);
+                return Result.Fail(rollbackResult.Errors);
+            }
+            return Result.Fail(commitResult.Errors);
         }
         _logger.LogInformation("New user {userID} has been created at {Time}", user.ID, DateTime.UtcNow);
         return Result.Ok();

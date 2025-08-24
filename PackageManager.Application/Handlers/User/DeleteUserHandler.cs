@@ -30,11 +30,22 @@ public class DeleteUserHandler(
             return Result.Fail(userResult.Errors);
         }
         var user = userResult.Value;
-        user.IsDeleted = true;
-        var savingResult = await _unitOfWork.SaveChangesAsync();
-        if (savingResult.IsFailed)
+        var transactionResult = await _unitOfWork.BeginTransactionAsync();
+        if (transactionResult.IsFailed)
         {
-            return Result.Fail(savingResult.Errors);
+            return Result.Fail(transactionResult.Errors);
+        }
+        user.IsDeleted = true;
+        var commitResult = await _unitOfWork.CommitTransactionAsync();
+        if (commitResult.IsFailed)
+        {
+            var rollbackResult = await _unitOfWork.RollbackTransactionAsync();
+            if (rollbackResult.IsFailed)
+            {
+                _logger.LogCritical("Failed to rollback transaction at {Time}", DateTime.UtcNow);
+                return Result.Fail(rollbackResult.Errors);
+            }
+            return Result.Fail(commitResult.Errors);
         }
         _logger.LogInformation("User {UserID} has been deleted at {Time}", user.ID, DateTime.UtcNow);
         return Result.Ok();

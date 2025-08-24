@@ -40,6 +40,11 @@ public class EfUnitOfWork(
         {
             return Result.Fail(new Error("Failed to commit transaction").CausedBy(ex));
         }
+        finally
+        {
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
         return Result.Ok();
     }
 
@@ -56,6 +61,11 @@ public class EfUnitOfWork(
         catch (Exception ex)
         {
             return Result.Fail(new Error("Failed to rollback transaction").CausedBy(ex));
+        }
+        finally
+        {
+            await _transaction.DisposeAsync();
+            _transaction = null;
         }
         return Result.Ok();
     }
