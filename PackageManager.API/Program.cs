@@ -4,6 +4,7 @@ using PackageManager.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddMediatR();
+builder.AddMappingProfiles();
 builder.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddOpenApi();
