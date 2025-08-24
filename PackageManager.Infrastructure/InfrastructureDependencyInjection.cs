@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PackageManager.Core.Interfaces;
 using PackageManager.Infrastructure.Data;
-using PackageManager.Infrastructure.Interfaces;
 using PackageManager.Infrastructure.Repositories;
 using PackageManager.Infrastructure.Services;
 
