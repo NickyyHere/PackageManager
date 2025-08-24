@@ -40,11 +40,8 @@ public class EfUnitOfWork(
         {
             return Result.Fail(new Error("Failed to commit transaction").CausedBy(ex));
         }
-        finally
-        {
-            await _transaction.DisposeAsync();
-            _transaction = null;
-        }
+        await _transaction.DisposeAsync();
+        _transaction = null;
         return Result.Ok();
     }
 
