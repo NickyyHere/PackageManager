@@ -24,16 +24,14 @@ public class UserRepository(
         return Result.Ok();
     }
 
-    public async Task<Result> DeleteUserByIdAsync(Guid userId)
+    public async Task<Result<User>> GetUserByIdAsync(Guid userId)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.ID == userId && !u.IsDeleted);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == userId);
         if (user == null)
         {
             return Result.Fail($"User with ID {userId} does not exist");
         }
-        user.IsDeleted = true;
-        return Result.Ok();
+        return Result.Ok(user);
     }
 
     public async Task<Result<User>> GetUserByEmail(string email)

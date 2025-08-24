@@ -10,10 +10,12 @@ namespace PackageManager.Application.Handlers.User;
 
 public class CreateUserHandler(
     IUserRepository userRepository,
+    IUnitOfWork unitOfWork,
     ILogger<CreateUserHandler> logger
 ) : IRequestHandler<CreateUserCommand, Result>
 {
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly ILogger<CreateUserHandler> _logger = logger;
     public async Task<Result> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
@@ -27,7 +29,17 @@ public class CreateUserHandler(
         };
         user.Password = hasher.HashPassword(user, request.Password);
         user.ID = Guid.NewGuid();
+        var addUserResult = await _userRepository.AddUserAsync(user);
+        if (addUserResult.IsFailed)
+        {
+            return Result.Fail(addUserResult.Errors);
+        }
+        var savingResult = await _unitOfWork.SaveChangesAsync();
+        if (savingResult.IsFailed)
+        {
+            return Result.Fail(savingResult.Errors);
+        }
         _logger.LogInformation("New user {userID} has been created at {Time}", user.ID, DateTime.UtcNow);
-        return await _userRepository.AddUserAsync(user);
+        return Result.Ok();
     }
 }

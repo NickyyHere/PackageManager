@@ -1,6 +1,6 @@
 using FluentResults;
 
-namespace PackageManager.Infrastructure.Interfaces;
+namespace PackageManager.Core.Interfaces;
 
 public interface IUnitOfWork
 {

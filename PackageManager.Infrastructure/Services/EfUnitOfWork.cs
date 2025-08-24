@@ -3,9 +3,8 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql;
+using PackageManager.Core.Interfaces;
 using PackageManager.Infrastructure.Data;
-using PackageManager.Infrastructure.Interfaces;
-
 namespace PackageManager.Infrastructure.Services;
 
 public class EfUnitOfWork(
