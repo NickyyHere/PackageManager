@@ -1,11 +1,8 @@
 using PackageManage.API.Middleware;
-using PackageManager.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddMediatR();
-builder.AddMappingProfiles();
-builder.AddInfrastructure(builder.Configuration);
+builder.BuildModule();
 
 builder.Services.AddOpenApi();
 var app = builder.Build();
