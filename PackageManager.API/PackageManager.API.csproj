@@ -11,4 +11,8 @@
     <ProjectReference Include="..\PackageManager.Infrastructure\PackageManager.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+  </ItemGroup>
+
 </Project>
